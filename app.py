@@ -18,7 +18,9 @@ def days_remaining():
     return remaining_days
 
 
-def create_text_field_with_properties(text, x, y, width, height, alignment, text_color=None):
+def create_text_field_with_properties(
+    text, x, y, width, height, alignment, text_color=None
+):
     """Create a text field with the given properties."""
     text_field = AppKit.NSTextField.alloc().initWithFrame_(
         AppKit.NSMakeRect(x, y, width, height)
@@ -52,28 +54,30 @@ def show_welcome_message(_):
     alert.setMessageText_("welcome")
 
     main_text_field = create_text_field_with_properties(
-        message, 0, 20, 400, 150, AppKit.NSLeftTextAlignment
+        message, 0, 20, 300, 150, AppKit.NSLeftTextAlignment
     )
     gray_color = AppKit.NSColor.grayColor()
     left_text_field = create_text_field_with_properties(
-        left_text, 0, 0, 200, 20, AppKit.NSLeftTextAlignment, gray_color
+        left_text, 0, 0, 150, 20, AppKit.NSLeftTextAlignment, gray_color
     )
     right_text_field = create_text_field_with_properties(
-        right_text, 200, 0, 200, 20, AppKit.NSRightTextAlignment, gray_color
+        right_text, 150, 0, 150, 20, AppKit.NSRightTextAlignment, gray_color
     )
     container_view = AppKit.NSView.alloc().initWithFrame_(
-    AppKit.NSMakeRect(0, 0, 400, 170)
-)
+        AppKit.NSMakeRect(0, 0, 300, 170)
+    )
     container_view.addSubview_(main_text_field)
     container_view.addSubview_(left_text_field)
     container_view.addSubview_(right_text_field)
 
     alert.setAccessoryView_(container_view)
-    alert.setIcon_(AppKit.NSImage.alloc().initWithContentsOfFile_("logo.png"))
+    alert.setIcon_(AppKit.NSImage.alloc().initWithContentsOfFile_("icon.icns"))
     alert.runModal()
+
 
 class MenuBarApp(rumps.App):
     """A menu bar app."""
+
     def __init__(self):
         """Initialize the app."""
         super(MenuBarApp, self).__init__("Days Remaining", icon="icon.icns")
@@ -84,19 +88,49 @@ class MenuBarApp(rumps.App):
         """Create the menu for the app."""
         menu = [
             rumps.MenuItem("welcome", callback=show_welcome_message),
+            self.create_upcoming_menu(),
             self.create_assets_menu(),
+            rumps.MenuItem(
+                "twitter",
+                callback=lambda _: webbrowser.open("https://twitter.com/_buildspace"),
+            ),
             rumps.MenuItem("quit", callback=quit_app),
         ]
         return menu
 
+    def create_upcoming_menu(self):
+        """Create the upcoming menu."""
+        upcoming_base_url = "https://lu.ma/"
+        upcoming_menu = rumps.MenuItem("upcoming")
+        upcoming_menu.add(
+            rumps.MenuItem(
+                "april 11 - ideas 101 w/ farza",
+                callback=lambda _: webbrowser.open(f"{upcoming_base_url}/26hnwhzm"),
+            )
+        )
+        upcoming_menu.add(
+            rumps.MenuItem(
+                "april 13 - building w/ shaan puri",
+                callback=lambda _: webbrowser.open(f"{upcoming_base_url}/6vgyneo4"),
+            )
+        )
+        upcoming_menu.add(
+            rumps.MenuItem(
+                "april 15 - life & lexica w/ sharif",
+                callback=lambda _: webbrowser.open(f"{upcoming_base_url}/8s7zlrgc"),
+            )
+        )
+        return upcoming_menu
+
     def create_assets_menu(self):
         """Create the assets menu."""
+        assets_base_url = "https://framerusercontent.com/images"
         assets_menu = rumps.MenuItem("assets")
         assets_menu.add(
             rumps.MenuItem(
                 "spectreseek",
                 callback=lambda _: webbrowser.open(
-                    "https://framerusercontent.com/images/A4ATGSFzLdUkscJGEJAl1xoRg.png"
+                    f"{assets_base_url}/A4ATGSFzLdUkscJGEJAl1xoRg.png"
                 ),
             )
         )
@@ -104,7 +138,7 @@ class MenuBarApp(rumps.App):
             rumps.MenuItem(
                 "alterok",
                 callback=lambda _: webbrowser.open(
-                    "https://framerusercontent.com/images/amo7e1yQz0pEcRbaZFObkTpQIjc.png"
+                    f"{assets_base_url}/amo7e1yQz0pEcRbaZFObkTpQIjc.png"
                 ),
             )
         )
@@ -112,7 +146,7 @@ class MenuBarApp(rumps.App):
             rumps.MenuItem(
                 "gaudmire",
                 callback=lambda _: webbrowser.open(
-                    "https://framerusercontent.com/images/3HszPak0gJ3FySgT9VG9uk02j4.png"
+                    f"{assets_base_url}/3HszPak0gJ3FySgT9VG9uk02j4.png"
                 ),
             )
         )
@@ -120,7 +154,7 @@ class MenuBarApp(rumps.App):
             rumps.MenuItem(
                 "erevald",
                 callback=lambda _: webbrowser.open(
-                    "https://framerusercontent.com/images/kzNIFbdmcPta67CoMrd1x93h9o0.png"
+                    f"{assets_base_url}/kzNIFbdmcPta67CoMrd1x93h9o0.png"
                 ),
             )
         )
@@ -134,6 +168,7 @@ class MenuBarApp(rumps.App):
     def update_title(self, sender):
         """Update the title of the app."""
         self.title = self.get_title()
+
 
 app = MenuBarApp()
 app.quit_button = None
